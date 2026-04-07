@@ -1,8 +1,25 @@
 # ESL Resources Gallery
 
-A self-hosted gallery app for browsing, uploading, and managing photocopiable ESL teaching resources. Teachers upload PDF worksheets, the system converts them to browsable pages, and AI auto-generates metadata (title, grammar tags, activity type).
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-green.svg)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)](https://sqlite.org)
 
-**Live demo:** [apps.schenker.blog/esl/](https://apps.schenker.blog/esl/)
+A self-hosted gallery for ESL teaching teams to share, organize, and review photocopiable classroom resources. Upload a PDF, and the system converts it to browsable pages and uses AI to auto-generate metadata — title, grammar tags, CEFR level, activity type.
+
+Built for language schools, in-company training programs, and ESL departments that want a simple, private, self-managed resource library without relying on third-party platforms.
+
+**[Live Demo](https://apps.schenker.blog/esl/)**
+
+<!-- 
+## Screenshots
+
+To add screenshots, place them in a `docs/` folder and reference them here:
+
+![Gallery View](docs/screenshots/gallery.png)
+![Lightbox Viewer](docs/screenshots/lightbox.png)
+![Upload Flow](docs/screenshots/upload.png)
+-->
 
 ## Features
 
@@ -97,6 +114,10 @@ location /esl-api/ {
 sudo apt install poppler-utils
 ```
 
+## Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
 ## License
 
-MIT
+[MIT](LICENSE)
