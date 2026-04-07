@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+venv/
+.venv/
+
+# Database
+*.db
+
+# Media (user-uploaded content)
+media/
+frontend/img/
+frontend/pdf/
+
+# Environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db

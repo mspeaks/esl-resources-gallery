@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#f8fafc">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="ESL Gallery">
+  <link rel="manifest" href="/esl/manifest.json">
+  <title>ESL Grammar Resources</title>
+  <style>
+    /* === DESIGN SYSTEM === */
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --tag-bg: #eff6ff;
+      --tag-text: #1d4ed8;
+      --level-a1: #22c55e;
+      --level-a2: #84cc16;
+      --level-b1: #eab308;
+      --level-b2: #f97316;
+      --level-c1: #ef4444;
+      --level-c2: #dc2626;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* === HEADER === */
+    .site-header {
+      background: var(--primary);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .site-header h1 { font-size: 1.5rem; font-weight: 700; }
+    .site-header p { font-size: 0.875rem; opacity: 0.85; margin-top: 4px; }
+    .header-left {}
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .header-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      touch-action: manipulation;
+      white-space: nowrap;
+    }
+    .header-btn-primary { background: white; color: var(--primary); }
+    .header-btn-primary:hover { background: #e0e7ff; }
+    .header-btn-ghost { background: rgba(255,255,255,0.15); color: white; }
+    .header-btn-ghost:hover { background: rgba(255,255,255,0.25); }
+    .header-user { font-size: 0.85rem; opacity: 0.9; }
+    .pending-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #ef4444;
+      color: white;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      touch-action: manipulation;
+    }
+    .pending-badge:hover { background: #dc2626; }
+    .badge-count {
+      background: white;
+      color: #ef4444;
+      border-radius: 50%;
+      width: 18px; height: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    /* === FILTER BAR === */
+    .filter-bar {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      padding-top: max(12px, env(safe-area-inset-top));
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .filter-bar input[type="search"] {
+      flex: 1;
+      min-width: 150px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      outline: none;
+    }
+    .filter-bar input[type="search"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+    }
+    .filter-bar select {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      background: white;
+      cursor: pointer;
+    }
+    .filter-count {
+      font-size: 0.75rem;
+      color: var(--muted);
+      width: 100%;
+      text-align: right;
+    }
+
+    /* === ACTIVE FILTERS === */
+    .active-filters {
+      padding: 0 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .active-filters:empty { display: none; }
+    .filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .filter-pill:hover { background: #dbeafe; }
+    .filter-pill .x { font-weight: 700; }
+
+    /* === CARD GRID === */
+    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 16px; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    /* === RESOURCE CARD === */
+    .resource-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: box-shadow 0.2s, transform 0.15s;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .resource-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    .card-thumb {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      background: #e2e8f0;
+      display: block;
+    }
+    .card-body { padding: 12px 14px 14px; }
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .card-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.4;
+      margin-bottom: 10px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .card-rating {
+      font-size: 0.75rem;
+      color: #f59e0b;
+      margin-top: 4px;
+    }
+
+    /* === LEVEL BADGE === */
+    .level-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .level-a1 { background: var(--level-a1); }
+    .level-a2 { background: var(--level-a2); }
+    .level-b1 { background: var(--level-b1); color: #1e293b; }
+    .level-b2 { background: var(--level-b2); }
+    .level-c1 { background: var(--level-c1); }
+    .level-c2 { background: var(--level-c2); }
+
+    /* === GRAMMAR TAG === */
+    .grammar-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .grammar-tag:hover { background: #dbeafe; }
+
+    /* === LIGHTBOX === */
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.95);
+      z-index: 1000;
+      flex-direction: column;
+    }
+    .lightbox-overlay.active { display: flex; }
+
+    /* Close button */
+    .lb-close {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      z-index: 1001;
+      line-height: 1;
+    }
+
+    /* Mobile tabs */
+    .lb-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+    .lb-tab {
+      flex: 1;
+      padding: 12px;
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      border-bottom: 2px solid transparent;
+    }
+    .lb-tab.active { color: white; border-bottom-color: #3b82f6; }
+
+    /* Main content area */
+    .lb-content {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* Image pane */
+    .lb-image-pane {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 12px;
+      min-width: 0;
+    }
+    .lb-image-pane.hidden { display: none; }
+    .lightbox-overlay img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+      flex-shrink: 1;
+    }
+    .lb-caption {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.8rem;
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+    .lb-nav {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+      flex-shrink: 0;
+    }
+    .lb-btn {
+      color: white;
+      background: rgba(255,255,255,0.15);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      text-decoration: none;
+    }
+    .lb-btn:hover { background: rgba(255,255,255,0.25); }
+
+    /* Notes pane */
+    .lb-notes-pane {
+      width: 320px;
+      flex-shrink: 0;
+      background: #1e293b;
+      border-left: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .lb-notes-pane.hidden { display: none; }
+    .notes-pane-inner {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .notes-section-title {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.4);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .notes-display {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.85);
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .notes-display:empty::before { content: '(no notes yet)'; color: rgba(255,255,255,0.3); }
+    .notes-meta {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.35);
+      margin-top: 6px;
+    }
+    .notes-textarea {
+      width: 100%;
+      min-height: 80px;
+      max-height: 50vh;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: white;
+      font-size: 0.85rem;
+      padding: 8px 10px;
+      resize: none;
+      font-family: inherit;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+    .notes-textarea:focus { outline: none; border-color: #3b82f6; }
+    .notes-btn-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+    .notes-save-btn {
+      padding: 6px 14px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .notes-save-btn:hover { background: #1d4ed8; }
+    .notes-edit-btn {
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7);
+      border: none;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .notes-edit-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+    .notes-cancel-btn {
+      padding: 6px 12px;
+      background: transparent;
+      color: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .notes-cancel-btn:hover { color: white; }
+    .notes-saved { font-size: 0.75rem; color: #22c55e; display: none; }
+    .notes-login-prompt {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 20px 0;
+    }
+    .notes-login-link {
+      color: #60a5fa;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Log section */
+    .log-section { display: flex; flex-direction: column; gap: 6px; }
+    .log-add-row { display: flex; gap: 6px; }
+    .log-input {
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: white;
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      font-family: inherit;
+      min-width: 0;
+    }
+    .log-input:focus { outline: none; border-color: #3b82f6; }
+    .log-add-btn {
+      padding: 6px 10px;
+      background: #059669;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      white-space: nowrap;
+    }
+    .log-add-btn:hover { background: #047857; }
+    .log-entry {
+      background: #0f172a;
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+    .log-entry-text { font-size: 0.82rem; color: rgba(255,255,255,0.85); margin-bottom: 4px; }
+    .log-entry-stars { font-size: 0.8rem; color: #f59e0b; margin-bottom: 2px; }
+    .log-entry-meta { display: flex; justify-content: space-between; align-items: center; }
+    .log-entry-author { font-size: 0.7rem; color: rgba(255,255,255,0.4); }
+    .log-delete {
+      background: none; border: none;
+      color: rgba(255,255,255,0.3);
+      cursor: pointer; font-size: 0.85rem; padding: 0;
+      touch-action: manipulation;
+    }
+    .log-delete:hover { color: #ef4444; }
+
+    /* Star rating input */
+    .star-input-row { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+    .star-input-label { font-size: 0.75rem; color: rgba(255,255,255,0.4); }
+    .star-input span {
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: rgba(255,255,255,0.25);
+      transition: color 0.1s;
+      user-select: none;
+    }
+    .star-input span.filled { color: #f59e0b; }
+
+    /* Desktop: always show side panel, hide tabs */
+    @media (min-width: 768px) {
+      .lb-tabs { display: none; }
+      .lb-image-pane { display: flex !important; }
+      .lb-notes-pane { display: flex !important; }
+    }
+    /* Mobile: full width panes, tabs control visibility */
+    @media (max-width: 767px) {
+      .lb-notes-pane { width: 100%; border-left: none; border-top: 1px solid rgba(255,255,255,0.1); }
+    }
+
+    /* === DOWNLOAD BUTTON === */
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #059669;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      touch-action: manipulation;
+      margin-top: 8px;
+      text-decoration: none;
+    }
+    .download-btn:hover { background: #047857; }
+
+    /* === EMPTY STATE / LOADING === */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-state h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    .loading-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .error-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #ef4444;
+    }
+
+    /* === MODAL SYSTEM === */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-box-lg { max-width: 620px; }
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      cursor: pointer;
+      color: var(--muted);
+      line-height: 1;
+      padding: 0;
+      touch-action: manipulation;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-field { margin-bottom: 12px; }
+    .modal-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .modal-input {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+    }
+    .modal-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.12); }
+    .modal-select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: white;
+      cursor: pointer;
+    }
+    .modal-btn {
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      touch-action: manipulation;
+      margin-top: 4px;
+    }
+    .modal-btn:hover { background: var(--primary-hover); }
+    .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .modal-error {
+      color: #ef4444;
+      font-size: 0.8rem;
+      margin-top: 8px;
+      display: none;
+    }
+    .modal-success {
+      color: #059669;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      text-align: center;
+      display: none;
+    }
+    .modal-divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+    /* Pending queue */
+    .pending-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .pending-item-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+    .pending-item-meta { font-size: 0.78rem; color: var(--muted); margin-bottom: 8px; }
+    .pending-item-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-approve {
+      padding: 5px 12px;
+      background: #059669;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .btn-approve:hover { background: #047857; }
+    .btn-reject {
+      padding: 5px 12px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .btn-reject:hover { background: #dc2626; }
+    .btn-view {
+      padding: 5px 12px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .btn-view:hover { background: #dbeafe; }
+    .btn-delete-sm {
+      padding: 5px 12px;
+      background: #fee2e2;
+      color: #ef4444;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .btn-delete-sm:hover { background: #fecaca; }
+    .reject-row { margin-top: 8px; display: none; }
+    .reject-input {
+      width: 100%;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      margin-bottom: 6px;
+    }
+    .reject-confirm {
+      padding: 5px 12px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .reject-confirm:hover { background: #dc2626; }
+
+    /* Enriched pending items */
+    .pending-item { display: flex; gap: 12px; align-items: flex-start; }
+    .pending-thumb { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; flex-shrink: 0; cursor: pointer; }
+    .pending-info { flex: 1; min-width: 0; }
+    .pending-desc { font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .pending-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+
+    /* Lightbox approval panel */
+    .lb-pending-panel { padding: 16px; color: rgba(255,255,255,0.9); }
+    .lb-pending-panel h3 { margin: 0 0 12px; font-size: 1rem; }
+    .lb-pending-meta { font-size: 0.82rem; color: rgba(255,255,255,0.6); margin-bottom: 12px; }
+    .lb-pending-desc { font-size: 0.85rem; margin-bottom: 12px; line-height: 1.5; }
+    .lb-pending-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .lb-pending-actions { display: flex; flex-direction: column; gap: 8px; }
+    .lb-pending-actions .btn-approve,
+    .lb-pending-actions .btn-reject,
+    .lb-pending-actions .btn-delete-sm { width: 100%; padding: 8px 12px; font-size: 0.85rem; }
+    .lb-pending-actions .reject-row { margin-top: 0; }
+    .lb-pending-actions .reject-input { width: 100%; box-sizing: border-box; }
+
+    /* User management */
+    .user-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .user-item:last-child { border-bottom: none; }
+    .user-info .user-name { font-weight: 600; font-size: 0.9rem; }
+    .user-info .user-role {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: capitalize;
+    }
+
+    /* My submissions */
+    .submission-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .submission-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+    .submission-meta { font-size: 0.78rem; color: var(--muted); }
+    .status-pending { color: #f59e0b; font-weight: 600; }
+    .status-approved { color: #059669; font-weight: 600; }
+    .status-rejected { color: #ef4444; font-weight: 600; }
+    .rejection-reason {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: #ef4444;
+      background: #fee2e2;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+
+    /* Upload form textarea */
+    .modal-textarea {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 70px;
+      outline: none;
+    }
+    .modal-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.12); }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 640px) {
+      .card-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .card-body { padding: 10px; }
+      .card-title { font-size: 0.85rem; }
+      .site-header h1 { font-size: 1.25rem; }
+    }
+    @media (max-width: 380px) {
+      .card-grid { grid-template-columns: 1fr; }
+    }
+
+    /* === PRINT STYLES === */
+    @media print {
+      .filter-bar, .site-header, .lb-close, .lb-nav { display: none !important; }
+      .resource-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ====== HEADER ====== -->
+<header class="site-header">
+  <div class="header-left">
+    <h1>📚 ESL Grammar Resources</h1>
+    <p>Photocopiable activities for English language teachers</p>
+  </div>
+  <div class="header-right" id="headerRight">
+    <!-- Populated by JS -->
+  </div>
+</header>
+
+<!-- ====== LOGIN MODAL ====== -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-box">
+    <div class="modal-title">
+      Login
+      <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Username</label>
+      <input class="modal-input" type="text" id="loginUsername" placeholder="Enter username" autocomplete="username">
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">Password</label>
+      <input class="modal-input" type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+    </div>
+    <div class="modal-error" id="loginError">Invalid username or password.</div>
+    <button class="modal-btn" id="loginBtn" onclick="submitLogin()">Login</button>
+  </div>
+</div>
+
+<!-- ====== UPLOAD MODAL ====== -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal-box">
+    <div class="modal-title">
+      ⬆ Submit Resource
+      <button class="modal-close" onclick="closeModal('uploadModal')">&times;</button>
+    </div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px;">Upload a PDF and select the level — the system will automatically identify the title, grammar focus, and activity type.</p>
+    <div class="modal-field">
+      <label class="modal-label">Level *</label>
+      <select class="modal-select" id="uploadLevel">
+        <option value="">Select level...</option>
+        <option value="A1">A1 — Beginner</option>
+        <option value="A2">A2 — Elementary</option>
+        <option value="B1">B1 — Intermediate</option>
+        <option value="B2">B2 — Upper Int.</option>
+        <option value="C1">C1 — Advanced</option>
+        <option value="C2">C2 — Proficiency</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label class="modal-label">PDF File *</label>
+      <input class="modal-input" type="file" id="uploadPdf" accept=".pdf">
+    </div>
+    <div class="modal-error" id="uploadError"></div>
+    <div class="modal-success" id="uploadSuccess">✓ Submitted for review! The coordinator will check the details before it goes live.</div>
+    <button class="modal-btn" id="uploadBtn" onclick="submitUpload()">Submit for Review</button>
+  </div>
+</div>
+
+<!-- ====== PENDING MODAL (coordinator) ====== -->
+<div class="modal-overlay" id="pendingModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-title">
+      📋 Pending Resources
+      <button class="modal-close" onclick="closeModal('pendingModal')">&times;</button>
+    </div>
+    <div id="pendingList"><p style="color:var(--muted);text-align:center;">Loading...</p></div>
+  </div>
+</div>
+
+<!-- ====== USERS MODAL (coordinator) ====== -->
+<div class="modal-overlay" id="usersModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-title">
+      👥 User Management
+      <button class="modal-close" onclick="closeModal('usersModal')">&times;</button>
+    </div>
+    <div id="usersList" style="margin-bottom:16px;"></div>
+    <hr class="modal-divider">
+    <div style="font-weight:600;margin-bottom:12px;font-size:0.9rem;">Add New User</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="modal-field">
+        <label class="modal-label">Username</label>
+        <input class="modal-input" type="text" id="newUsername" placeholder="username">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Display Name</label>
+        <input class="modal-input" type="text" id="newDisplayName" placeholder="Full name">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Password</label>
+        <input class="modal-input" type="password" id="newPassword" placeholder="Password">
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Role</label>
+        <select class="modal-select" id="newRole">
+          <option value="teacher">Teacher</option>
+          <option value="coordinator">Coordinator</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-error" id="usersError"></div>
+    <button class="modal-btn" onclick="submitCreateUser()">Add User</button>
+  </div>
+</div>
+
+<!-- ====== MY SUBMISSIONS MODAL ====== -->
+<div class="modal-overlay" id="mySubsModal">
+  <div class="modal-box modal-box-lg">
+    <div class="modal-title">
+      📤 My Submissions
+      <button class="modal-close" onclick="closeModal('mySubsModal')">&times;</button>
+    </div>
+    <div id="mySubsList"><p style="color:var(--muted);text-align:center;">Loading...</p></div>
+  </div>
+</div>
+
+<!-- ====== FILTER BAR ====== -->
+<div class="filter-bar">
+  <input type="search" id="search" placeholder="Search activities..." autocomplete="off">
+  <select id="levelFilter">
+    <option value="">All Levels</option>
+    <option value="A1">A1 — Beginner</option>
+    <option value="A2">A2 — Elementary</option>
+    <option value="B1">B1 — Intermediate</option>
+    <option value="B2">B2 — Upper Int.</option>
+    <option value="C1">C1 — Advanced</option>
+    <option value="C2">C2 — Proficiency</option>
+  </select>
+  <select id="grammarFilter">
+    <option value="">All Grammar</option>
+    <!-- Populated after resources load -->
+  </select>
+  <select id="typeFilter">
+    <option value="">All Types</option>
+    <option value="worksheet">Worksheet</option>
+    <option value="game">Game</option>
+    <option value="speaking">Speaking Activity</option>
+    <option value="writing">Writing Prompt</option>
+    <option value="gap-fill">Gap Fill</option>
+    <option value="matching">Matching</option>
+    <option value="error-correction">Error Correction</option>
+    <option value="reference">Reference / Visual Aid</option>
+  </select>
+  <div class="filter-count" id="filterCount"></div>
+</div>
+<div class="active-filters" id="activeFilters"></div>
+
+<!-- ====== CARD GRID ====== -->
+<div class="page-wrap">
+  <div class="card-grid" id="cardGrid">
+    <div class="loading-state" style="grid-column:1/-1">Loading resources…</div>
+  </div>
+  <div class="empty-state" id="emptyState" style="display:none;">
+    <h2>No resources found</h2>
+    <p>Try adjusting your filters or search terms</p>
+  </div>
+</div>
+
+<!-- ====== LIGHTBOX ====== -->
+<div class="lightbox-overlay" id="lightbox">
+  <span class="lb-close" onclick="closeLightbox()">&times;</span>
+
+  <!-- Mobile tabs -->
+  <div class="lb-tabs">
+    <button class="lb-tab active" id="tabImage" onclick="showTab('image')">🖼 Preview</button>
+    <button class="lb-tab" id="tabNotes" onclick="showTab('notes')">📝 Notes</button>
+  </div>
+
+  <!-- Main area: image pane + notes pane side by side (desktop) -->
+  <div class="lb-content">
+
+    <!-- Image pane -->
+    <div class="lb-image-pane" id="lbImagePane">
+      <img id="lbImage" src="" alt="" style="max-height: calc(100vh - 160px);">
+      <div class="lb-caption" id="lbCaption"></div>
+      <div class="lb-nav">
+        <button class="lb-btn" onclick="lbPrev()">← Prev</button>
+        <a class="lb-btn" id="lbDownload" href="" download style="text-decoration:none; display:none;">⬇ Download PDF</a>
+        <button class="lb-btn" onclick="lbNext()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Notes pane -->
+    <div class="lb-notes-pane hidden" id="lbNotesPane">
+      <div class="notes-pane-inner" id="notesPaneInner">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ====== SCRIPTS ====== -->
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let currentUser = null;         // { id, username, display_name, role }
+let allResources = [];          // array from API
+let currentLbResource = null;   // resource currently open in lightbox
+let currentResourceDetail = null; // full detail with notes+log
+let lbPages = [];
+let lbIndex = 0;
+let pendingCount = 0;
+let logRatingSelected = 0;      // 0 = no rating
+let notesEditMode = false;
+let pendingPreviewMode = false;
+let pendingItems = [];           // cached pending list for preview
+
+const API = '/esl-api';
+
+// ============================================================
+// HELPERS
+// ============================================================
+function imgSrc(path) {
+  if (!path) return null;
+  return `/esl/${path}`;
+}
+function pdfSrc(path) {
+  if (!path) return null;
+  return `/esl/${path}`;
+}
+function levelClass(level) {
+  return 'level-' + level.toLowerCase();
+}
+function placeholderThumb(title) {
+  const colors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#6366f1'];
+  const hash = title.split('').reduce((a,c) => a + c.charCodeAt(0), 0);
+  const bg = colors[hash % colors.length];
+  return `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect fill="${bg}" width="400" height="300"/><text x="200" y="160" text-anchor="middle" fill="white" font-family="sans-serif" font-size="48" font-weight="bold">${title.substring(0,2).toUpperCase()}</text></svg>`)}`;
+}
+function starsDisplay(rating) {
+  if (!rating) return '';
+  const full = Math.round(rating);
+  return '★'.repeat(full) + '☆'.repeat(5 - full);
+}
+function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+  } catch(e) { return iso.slice(0,10); }
+}
+function isCoord() {
+  return currentUser && currentUser.role === 'coordinator';
+}
+function canEditNotes(resource) {
+  if (!currentUser || !resource) return false;
+  return isCoord() || currentUser.id === resource.uploaded_by;
+}
+
+// ============================================================
+// MODALS
+// ============================================================
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+async function checkAuth() {
+  try {
+    const res = await fetch(`${API}/auth/me`, {credentials:'include'});
+    if (res.ok) {
+      currentUser = await res.json();
+    } else {
+      currentUser = null;
+    }
+  } catch(e) {
+    currentUser = null;
+  }
+  updateHeader();
+}
+
+function updateHeader() {
+  const el = document.getElementById('headerRight');
+  if (!currentUser) {
+    el.innerHTML = `<button class="header-btn header-btn-primary" onclick="openModal('loginModal')">Login</button>`;
+  } else {
+    let html = `<span class="header-user">Hi, ${escHtml(currentUser.display_name)}</span>`;
+    // Submit button for all logged-in users
+    html += `<button class="header-btn header-btn-ghost" onclick="openUploadModal()">⬆ Submit</button>`;
+    // Coordinator: pending badge + user management
+    if (isCoord()) {
+      html += `<button class="header-btn header-btn-ghost" onclick="openUsersModal()">👥 Users</button>`;
+      if (pendingCount > 0) {
+        html += `<button class="pending-badge" onclick="openPendingModal()">Pending <span class="badge-count">${pendingCount}</span></button>`;
+      } else {
+        html += `<button class="header-btn header-btn-ghost" onclick="openPendingModal()">📋 Pending</button>`;
+      }
+    } else {
+      // Teacher: my submissions
+      html += `<button class="header-btn header-btn-ghost" onclick="openMySubsModal()">📤 My Submissions</button>`;
+    }
+    html += `<button class="header-btn header-btn-ghost" onclick="doLogout()">Logout</button>`;
+    el.innerHTML = html;
+  }
+}
+
+function openLoginModal() {
+  document.getElementById('loginUsername').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').style.display = 'none';
+  openModal('loginModal');
+  setTimeout(() => document.getElementById('loginUsername').focus(), 100);
+}
+
+async function submitLogin() {
+  const username = document.getElementById('loginUsername').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
+  if (!username || !password) { errEl.textContent = 'Please fill in both fields.'; errEl.style.display = 'block'; return; }
+  btn.disabled = true;
+  btn.textContent = 'Logging in…';
+  errEl.style.display = 'none';
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({username, password})
+    });
+    if (res.ok) {
+      currentUser = await res.json();
+      closeModal('loginModal');
+      updateHeader();
+      if (isCoord()) loadPendingCount();
+      // Re-render notes pane if lightbox open
+      if (document.getElementById('lightbox').classList.contains('active') && currentLbResource) {
+        loadResourceDetail(currentLbResource.id);
+      }
+    } else {
+      errEl.textContent = 'Invalid username or password.';
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = 'Connection error. Please try again.';
+    errEl.style.display = 'block';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Login';
+}
+
+async function doLogout() {
+  try {
+    await fetch(`${API}/auth/logout`, {method:'POST', credentials:'include'});
+  } catch(e) {}
+  currentUser = null;
+  pendingCount = 0;
+  updateHeader();
+  // Update notes pane if lightbox open
+  if (document.getElementById('lightbox').classList.contains('active')) {
+    renderNotesPane();
+  }
+}
+
+// Allow Enter in login fields
+document.getElementById('loginPassword').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitLogin();
+});
+document.getElementById('loginUsername').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('loginPassword').focus();
+});
+
+// ============================================================
+// RESOURCE LOADING
+// ============================================================
+async function loadResources() {
+  try {
+    const res = await fetch(`${API}/resources`, {credentials:'include'});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    allResources = await res.json();
+    populateGrammarFilter(allResources);
+    applyFilters();
+  } catch(e) {
+    document.getElementById('cardGrid').innerHTML =
+      `<div class="error-state" style="grid-column:1/-1">⚠️ Failed to load resources. Please refresh the page.</div>`;
+  }
+}
+
+function populateGrammarFilter(resources) {
+  const grammarSelect = document.getElementById('grammarFilter');
+  const existing = grammarSelect.value;
+  // Clear existing dynamic options (keep "All Grammar")
+  while (grammarSelect.options.length > 1) grammarSelect.remove(1);
+  const tags = [...new Set(resources.flatMap(r => r.grammar || []))].sort();
+  tags.forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g;
+    opt.textContent = g;
+    grammarSelect.appendChild(opt);
+  });
+  if (existing) grammarSelect.value = existing;
+}
+
+// ============================================================
+// FILTERING & RENDERING
+// ============================================================
+const searchInput = document.getElementById('search');
+const levelFilter = document.getElementById('levelFilter');
+const grammarFilter = document.getElementById('grammarFilter');
+const typeFilter = document.getElementById('typeFilter');
+const cardGrid = document.getElementById('cardGrid');
+const emptyState = document.getElementById('emptyState');
+const filterCountEl = document.getElementById('filterCount');
+const activeFiltersEl = document.getElementById('activeFilters');
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderCards(resources) {
+  cardGrid.innerHTML = '';
+  emptyState.style.display = 'none';
+  if (resources.length === 0) {
+    emptyState.style.display = 'block';
+    filterCountEl.textContent = '0 resources';
+    return;
+  }
+  filterCountEl.textContent = `${resources.length} resource${resources.length !== 1 ? 's' : ''}`;
+
+  resources.forEach(r => {
+    const thumb = r.thumbnail ? imgSrc(r.thumbnail) : placeholderThumb(r.title);
+    const pdf = r.pdf_path ? pdfSrc(r.pdf_path) : null;
+    const card = document.createElement('div');
+    card.className = 'resource-card';
+    card.onclick = () => openResource(r);
+    card.innerHTML = `
+      <img class="card-thumb" src="${escHtml(thumb)}" alt="${escHtml(r.title)}" loading="lazy" onerror="this.src='${placeholderThumb(r.title)}'">
+      <div class="card-body">
+        <div class="card-title">${escHtml(r.title)}</div>
+        <div class="card-desc">${escHtml(r.description)}</div>
+        <div class="card-meta">
+          <span class="level-badge ${levelClass(r.level)}">${escHtml(r.level)}</span>
+          ${(r.grammar||[]).map(g => `<span class="grammar-tag" onclick="event.stopPropagation(); filterByGrammar('${escHtml(g)}')">${escHtml(g)}</span>`).join('')}
+        </div>
+        ${r.type ? `<div style="margin-top:6px;"><span class="grammar-tag" style="background:#f1f5f9;color:#475569;">${escHtml(r.type)}</span></div>` : ''}
+        ${r.avg_rating != null ? `<div class="card-rating">⭐ ${Number(r.avg_rating).toFixed(1)}</div>` : ''}
+        ${pdf ? `<a class="download-btn" href="${escHtml(pdf)}" download onclick="event.stopPropagation()">⬇ Download PDF</a>` : ''}
+      </div>
+    `;
+    cardGrid.appendChild(card);
+  });
+}
+
+function getFiltered() {
+  const q = searchInput.value.toLowerCase().trim();
+  const level = levelFilter.value;
+  const grammar = grammarFilter.value;
+  const type = typeFilter.value;
+  return allResources.filter(r => {
+    if (level && r.level !== level) return false;
+    if (grammar && !(r.grammar||[]).includes(grammar)) return false;
+    if (type && r.type !== type) return false;
+    if (q) {
+      const text = (r.title + ' ' + r.description + ' ' + (r.grammar||[]).join(' ')).toLowerCase();
+      if (!text.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function updateActiveFilters() {
+  activeFiltersEl.innerHTML = '';
+  const level = levelFilter.value;
+  const grammar = grammarFilter.value;
+  const type = typeFilter.value;
+  const q = searchInput.value.trim();
+  if (level) addPill('Level: ' + level, () => { levelFilter.value = ''; applyFilters(); });
+  if (grammar) addPill(grammar, () => { grammarFilter.value = ''; applyFilters(); });
+  if (type) addPill('Type: ' + type, () => { typeFilter.value = ''; applyFilters(); });
+  if (q) addPill('"' + q + '"', () => { searchInput.value = ''; applyFilters(); });
+}
+
+function addPill(text, onRemove) {
+  const pill = document.createElement('span');
+  pill.className = 'filter-pill';
+  pill.innerHTML = `${escHtml(text)} <span class="x">×</span>`;
+  pill.onclick = onRemove;
+  activeFiltersEl.appendChild(pill);
+}
+
+function applyFilters() {
+  renderCards(getFiltered());
+  updateActiveFilters();
+}
+
+function filterByGrammar(grammar) {
+  grammarFilter.value = grammar;
+  applyFilters();
+}
+
+searchInput.addEventListener('input', applyFilters);
+levelFilter.addEventListener('change', applyFilters);
+grammarFilter.addEventListener('change', applyFilters);
+typeFilter.addEventListener('change', applyFilters);
+
+// ============================================================
+// LIGHTBOX
+// ============================================================
+function openResource(resource) {
+  currentLbResource = resource;
+  if (resource.pages && resource.pages.length > 0) {
+    lbPages = resource.pages.map(p => imgSrc(p));
+    lbIndex = 0;
+    showLightbox(resource);
+  } else if (resource.pdf_path) {
+    window.open(pdfSrc(resource.pdf_path), '_blank');
+  }
+}
+
+function showLightbox(resource) {
+  const lb = document.getElementById('lightbox');
+  lb.classList.add('active');
+  document.getElementById('lbImage').src = lbPages[lbIndex];
+  updateCaption();
+  const dlBtn = document.getElementById('lbDownload');
+  if (resource.pdf_path) {
+    dlBtn.href = pdfSrc(resource.pdf_path);
+    dlBtn.style.display = '';
+  } else {
+    dlBtn.style.display = 'none';
+  }
+  showTab('image');
+  loadResourceDetail(resource.id);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+  currentLbResource = null;
+  currentResourceDetail = null;
+  notesEditMode = false;
+  logRatingSelected = 0;
+  pendingPreviewMode = false;
+}
+
+function updateCaption() {
+  if (!currentLbResource) return;
+  document.getElementById('lbCaption').textContent =
+    `${currentLbResource.title} — Page ${lbIndex + 1} of ${lbPages.length}`;
+}
+
+function lbPrev() {
+  if (lbIndex > 0) { lbIndex--; document.getElementById('lbImage').src = lbPages[lbIndex]; updateCaption(); }
+}
+function lbNext() {
+  if (lbIndex < lbPages.length - 1) { lbIndex++; document.getElementById('lbImage').src = lbPages[lbIndex]; updateCaption(); }
+}
+
+function showTab(tab) {
+  const imagePane = document.getElementById('lbImagePane');
+  const notesPane = document.getElementById('lbNotesPane');
+  const tabImage = document.getElementById('tabImage');
+  const tabNotes = document.getElementById('tabNotes');
+  if (tab === 'image') {
+    imagePane.classList.remove('hidden');
+    notesPane.classList.add('hidden');
+    tabImage.classList.add('active');
+    tabNotes.classList.remove('active');
+  } else {
+    imagePane.classList.add('hidden');
+    notesPane.classList.remove('hidden');
+    tabImage.classList.remove('active');
+    tabNotes.classList.add('active');
+  }
+}
+
+// ============================================================
+// NOTES & LOG
+// ============================================================
+async function loadResourceDetail(resourceId) {
+  // Show loading in notes pane
+  document.getElementById('notesPaneInner').innerHTML =
+    `<div style="color:rgba(255,255,255,0.4);font-size:0.85rem;text-align:center;padding:20px 0;">Loading…</div>`;
+  notesEditMode = false;
+  currentResourceDetail = null;
+
+  if (!currentUser) {
+    renderNotesPane();
+    return;
+  }
+  try {
+    const res = await fetch(`${API}/resources/${resourceId}`, {credentials:'include'});
+    if (res.ok) {
+      currentResourceDetail = await res.json();
+    }
+  } catch(e) {}
+  renderNotesPane();
+}
+
+function renderNotesPane() {
+  const container = document.getElementById('notesPaneInner');
+  if (!container) return;
+
+  if (pendingPreviewMode && currentLbResource) {
+    renderPendingApprovalPane(container);
+    return;
+  }
+
+  if (!currentUser) {
+    container.innerHTML = `
+      <div class="notes-login-prompt">
+        <div style="font-size:1.5rem;margin-bottom:8px;">🔒</div>
+        <span class="notes-login-link" onclick="openLoginModal()">Login</span> to view notes and class log.
+      </div>`;
+    return;
+  }
+
+  const detail = currentResourceDetail || currentLbResource || {};
+  const notes = detail.notes || '';
+  const log = detail.log || [];
+  const canEdit = canEditNotes(detail);
+
+  let html = '';
+
+  // --- NOTES SECTION ---
+  html += `<div>`;
+  html += `<div class="notes-section-title">Teaching Notes</div>`;
+
+  if (notesEditMode) {
+    html += `<textarea class="notes-textarea" id="notesTextarea" oninput="autoGrow(this)" placeholder="Add notes about this activity...">${escHtml(notes)}</textarea>`;
+    html += `<div class="notes-btn-row">
+      <button class="notes-save-btn" onclick="saveNotes()">Save</button>
+      <button class="notes-cancel-btn" onclick="cancelEditNotes()">Cancel</button>
+      <span class="notes-saved" id="notesSaved">✓ Saved</span>
+    </div>`;
+  } else {
+    html += `<div class="notes-display">${escHtml(notes)}</div>`;
+    if (detail.notes_updated_at) {
+      html += `<div class="notes-meta">Last updated by ${escHtml(detail.notes_updated_by_name || 'someone')} on ${formatDate(detail.notes_updated_at)}</div>`;
+    }
+    if (canEdit) {
+      html += `<div class="notes-btn-row"><button class="notes-edit-btn" onclick="startEditNotes()">✏ Edit Notes</button></div>`;
+    }
+  }
+  html += `</div>`;
+
+  // --- LOG SECTION ---
+  html += `<div class="log-section">`;
+  html += `<div class="notes-section-title">Class Log</div>`;
+
+  // Existing entries
+  if (log.length === 0) {
+    html += `<div style="font-size:0.8rem;color:rgba(255,255,255,0.3);">No log entries yet.</div>`;
+  } else {
+    log.forEach(entry => {
+      const stars = entry.rating ? `<div class="log-entry-stars">${'★'.repeat(entry.rating)}${'☆'.repeat(5 - entry.rating)}</div>` : '';
+      const deleteBtn = isCoord()
+        ? `<button class="log-delete" onclick="deleteLog(${entry.id})" title="Delete entry">✕</button>`
+        : '';
+      html += `<div class="log-entry">
+        <div class="log-entry-text">${escHtml(entry.entry)}</div>
+        ${stars}
+        <div class="log-entry-meta">
+          <span class="log-entry-author">${escHtml(entry.display_name)} · ${formatDate(entry.created_at)}</span>
+          ${deleteBtn}
+        </div>
+      </div>`;
+    });
+  }
+
+  // Add entry form
+  html += `<div class="log-add-row">
+    <input class="log-input" id="logInput" type="text" placeholder="e.g. B1 loved it, ~30 min">
+    <button class="log-add-btn" onclick="addLog()">+ Add</button>
+  </div>`;
+  html += `<div class="star-input-row">
+    <span class="star-input-label">Rating:</span>
+    <div class="star-input" id="starInput">
+      <span onclick="setLogRating(1)" data-val="1">☆</span>
+      <span onclick="setLogRating(2)" data-val="2">☆</span>
+      <span onclick="setLogRating(3)" data-val="3">☆</span>
+      <span onclick="setLogRating(4)" data-val="4">☆</span>
+      <span onclick="setLogRating(5)" data-val="5">☆</span>
+    </div>
+  </div>`;
+
+  html += `</div>`; // end log-section
+
+  container.innerHTML = html;
+
+  // Re-init textarea auto-grow if editing
+  if (notesEditMode) {
+    const ta = document.getElementById('notesTextarea');
+    if (ta) { autoGrow(ta); ta.addEventListener('input', function() { autoGrow(this); }); }
+  }
+  // Restore star rating state
+  updateStarInputDisplay();
+  // Log input enter key
+  const logInput = document.getElementById('logInput');
+  if (logInput) logInput.addEventListener('keydown', e => { if (e.key === 'Enter') addLog(); });
+}
+
+function renderPendingApprovalPane(container) {
+  const r = currentLbResource;
+  const grammar = (r.grammar || []).map(g => `<span class="grammar-tag">${escHtml(g)}</span>`).join('');
+  const typeBadge = r.type ? `<span class="grammar-tag" style="background:#f1f5f9;color:#475569;">${escHtml(r.type)}</span>` : '';
+  const levelBadge = r.level ? `<span class="level-badge ${levelClass(r.level)}">${escHtml(r.level)}</span>` : '';
+
+  container.innerHTML = `
+    <div class="lb-pending-panel">
+      <h3>Pending Review</h3>
+      <div class="lb-pending-meta">
+        Uploaded by ${escHtml(r.uploader_name || 'unknown')} · ${formatDate(r.created_at || r.uploaded_at)}
+      </div>
+      <div class="lb-pending-desc">${escHtml(r.description || 'No description.')}</div>
+      <div class="lb-pending-tags">${levelBadge}${grammar}${typeBadge}</div>
+      ${r.notes ? `<div style="margin-bottom:12px;"><strong style="font-size:0.82rem;">Teaching Notes:</strong><div style="font-size:0.82rem;margin-top:4px;color:rgba(255,255,255,0.7);white-space:pre-wrap;">${escHtml(r.notes)}</div></div>` : ''}
+      <div class="lb-pending-actions">
+        <button class="btn-approve" onclick="approvePending(${r.id})">✓ Approve</button>
+        <button class="btn-reject" onclick="document.getElementById('lb-reject-row').style.display='block'">✗ Reject</button>
+        <div class="reject-row" id="lb-reject-row">
+          <input class="reject-input" id="lb-reject-input" placeholder="Rejection reason (optional)">
+          <button class="reject-confirm" onclick="rejectPending(${r.id})">Confirm Reject</button>
+        </div>
+        <button class="btn-delete-sm" onclick="deletePending(${r.id})">🗑 Delete</button>
+      </div>
+    </div>`;
+}
+
+async function approvePending(id) {
+  try {
+    const res = await fetch(`${API}/resources/${id}/approve`, {method:'POST', credentials:'include'});
+    if (res.ok) {
+      removePendingItem(id);
+      closeLightbox();
+      loadResources();
+    }
+  } catch(e) {}
+}
+
+async function rejectPending(id) {
+  const comment = (document.getElementById('lb-reject-input')?.value || '').trim();
+  try {
+    const res = await fetch(`${API}/resources/${id}/reject`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({comment})
+    });
+    if (res.ok) {
+      removePendingItem(id);
+      closeLightbox();
+    }
+  } catch(e) {}
+}
+
+async function deletePending(id) {
+  if (!confirm('Permanently delete this resource?')) return;
+  try {
+    const res = await fetch(`${API}/resources/${id}`, {method:'DELETE', credentials:'include'});
+    if (res.ok) {
+      removePendingItem(id);
+      closeLightbox();
+    }
+  } catch(e) {}
+}
+
+function removePendingItem(id) {
+  const el = document.getElementById(`pending-${id}`);
+  if (el) el.remove();
+  pendingCount = Math.max(0, pendingCount - 1);
+  updateHeader();
+}
+
+function startEditNotes() {
+  notesEditMode = true;
+  renderNotesPane();
+}
+function cancelEditNotes() {
+  notesEditMode = false;
+  renderNotesPane();
+}
+
+async function saveNotes() {
+  if (!currentLbResource) return;
+  const ta = document.getElementById('notesTextarea');
+  const notes = ta ? ta.value : '';
+  try {
+    const res = await fetch(`${API}/resources/${currentLbResource.id}/notes`, {
+      method: 'PUT',
+      credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({notes})
+    });
+    if (res.ok) {
+      // Refresh detail
+      const updated = await fetch(`${API}/resources/${currentLbResource.id}`, {credentials:'include'});
+      if (updated.ok) currentResourceDetail = await updated.json();
+      notesEditMode = false;
+      renderNotesPane();
+    }
+  } catch(e) {}
+}
+
+async function addLog() {
+  if (!currentLbResource) return;
+  const input = document.getElementById('logInput');
+  const entry = input ? input.value.trim() : '';
+  if (!entry) return;
+  const payload = {entry};
+  if (logRatingSelected > 0) payload.rating = logRatingSelected;
+  try {
+    const res = await fetch(`${API}/resources/${currentLbResource.id}/log`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      logRatingSelected = 0;
+      // Reload detail
+      const updated = await fetch(`${API}/resources/${currentLbResource.id}`, {credentials:'include'});
+      if (updated.ok) currentResourceDetail = await updated.json();
+      renderNotesPane();
+    }
+  } catch(e) {}
+}
+
+async function deleteLog(logId) {
+  if (!currentLbResource) return;
+  if (!confirm('Delete this log entry?')) return;
+  try {
+    const res = await fetch(`${API}/resources/${currentLbResource.id}/log/${logId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    });
+    if (res.ok) {
+      const updated = await fetch(`${API}/resources/${currentLbResource.id}`, {credentials:'include'});
+      if (updated.ok) currentResourceDetail = await updated.json();
+      renderNotesPane();
+    }
+  } catch(e) {}
+}
+
+function setLogRating(val) {
+  logRatingSelected = logRatingSelected === val ? 0 : val;
+  updateStarInputDisplay();
+}
+
+function updateStarInputDisplay() {
+  const stars = document.querySelectorAll('#starInput span');
+  stars.forEach(s => {
+    const v = parseInt(s.getAttribute('data-val'));
+    s.textContent = v <= logRatingSelected ? '★' : '☆';
+    s.classList.toggle('filled', v <= logRatingSelected);
+  });
+}
+
+function autoGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, window.innerHeight * 0.5) + 'px';
+}
+
+// ============================================================
+// COORDINATOR: PENDING QUEUE
+// ============================================================
+async function loadPendingCount() {
+  try {
+    const res = await fetch(`${API}/pending`, {credentials:'include'});
+    if (res.ok) {
+      const data = await res.json();
+      pendingCount = data.length;
+      updateHeader();
+    }
+  } catch(e) {}
+}
+
+async function openPendingModal() {
+  openModal('pendingModal');
+  document.getElementById('pendingList').innerHTML = '<p style="color:var(--muted);text-align:center;">Loading…</p>';
+  try {
+    const res = await fetch(`${API}/pending`, {credentials:'include'});
+    if (res.ok) {
+      const items = await res.json();
+      renderPendingList(items);
+    } else {
+      document.getElementById('pendingList').innerHTML = '<p style="color:#ef4444;">Failed to load.</p>';
+    }
+  } catch(e) {
+    document.getElementById('pendingList').innerHTML = '<p style="color:#ef4444;">Connection error.</p>';
+  }
+}
+
+function renderPendingList(items) {
+  const el = document.getElementById('pendingList');
+  if (!items || items.length === 0) {
+    pendingItems = [];
+    el.innerHTML = '<p style="color:var(--muted);text-align:center;">No pending resources. 🎉</p>';
+    return;
+  }
+  pendingItems = items;
+  el.innerHTML = items.map(item => {
+    const thumb = item.thumbnail ? imgSrc(item.thumbnail) : placeholderThumb(item.title);
+    const grammar = (item.grammar || []).map(g => `<span class="grammar-tag">${escHtml(g)}</span>`).join('');
+    const typeBadge = item.type ? `<span class="grammar-tag" style="background:#f1f5f9;color:#475569;">${escHtml(item.type)}</span>` : '';
+    const levelBadge = item.level ? `<span class="level-badge ${levelClass(item.level)}">${escHtml(item.level)}</span>` : '';
+    return `
+    <div class="pending-item" id="pending-${item.id}">
+      <img class="pending-thumb" src="${escHtml(thumb)}" alt="" onclick="previewPending(${item.id})" onerror="this.src='${placeholderThumb(item.title)}'">
+      <div class="pending-info">
+        <div class="pending-item-title">${escHtml(item.title)}</div>
+        <div class="pending-desc">${escHtml(item.description || '')}</div>
+        <div class="pending-tags">${levelBadge}${grammar}${typeBadge}</div>
+        <div class="pending-item-meta">
+          Uploaded by ${escHtml(item.uploader_name || 'unknown')} · ${formatDate(item.created_at || item.uploaded_at)}
+        </div>
+        <div class="pending-item-btns">
+          <button class="btn-view" onclick="previewPending(${item.id})">👁 Preview</button>
+          <button class="btn-approve" onclick="approveResource(${item.id})">✓ Approve</button>
+          <button class="btn-reject" onclick="toggleRejectRow(${item.id})">✗ Reject</button>
+          <button class="btn-delete-sm" onclick="deleteResource(${item.id})">🗑 Delete</button>
+        </div>
+        <div class="reject-row" id="reject-row-${item.id}">
+          <input class="reject-input" id="reject-input-${item.id}" placeholder="Rejection reason (optional)">
+          <button class="reject-confirm" onclick="rejectResource(${item.id})">Confirm Reject</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function previewPending(id) {
+  const item = pendingItems.find(i => i.id === id);
+  if (!item) return;
+  closeModal('pendingModal');
+  pendingPreviewMode = true;
+  currentLbResource = item;
+  openResource(item);
+}
+
+function toggleRejectRow(id) {
+  const row = document.getElementById(`reject-row-${id}`);
+  row.style.display = row.style.display === 'block' ? 'none' : 'block';
+}
+
+async function approveResource(id) {
+  try {
+    const res = await fetch(`${API}/resources/${id}/approve`, {method:'POST', credentials:'include'});
+    if (res.ok) {
+      const el = document.getElementById(`pending-${id}`);
+      if (el) el.remove();
+      pendingCount = Math.max(0, pendingCount - 1);
+      updateHeader();
+      // Reload resources to show newly approved
+      loadResources();
+    }
+  } catch(e) {}
+}
+
+async function rejectResource(id) {
+  const comment = (document.getElementById(`reject-input-${id}`)?.value || '').trim();
+  try {
+    const res = await fetch(`${API}/resources/${id}/reject`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({comment})
+    });
+    if (res.ok) {
+      const el = document.getElementById(`pending-${id}`);
+      if (el) el.remove();
+      pendingCount = Math.max(0, pendingCount - 1);
+      updateHeader();
+    }
+  } catch(e) {}
+}
+
+async function deleteResource(id) {
+  if (!confirm('Permanently delete this resource?')) return;
+  try {
+    const res = await fetch(`${API}/resources/${id}`, {method:'DELETE', credentials:'include'});
+    if (res.ok) {
+      const el = document.getElementById(`pending-${id}`);
+      if (el) el.remove();
+      pendingCount = Math.max(0, pendingCount - 1);
+      updateHeader();
+    }
+  } catch(e) {}
+}
+
+// ============================================================
+// COORDINATOR: USER MANAGEMENT
+// ============================================================
+async function openUsersModal() {
+  openModal('usersModal');
+  document.getElementById('usersList').innerHTML = '<p style="color:var(--muted);">Loading…</p>';
+  document.getElementById('usersError').style.display = 'none';
+  await loadUsers();
+}
+
+async function loadUsers() {
+  try {
+    const res = await fetch(`${API}/users`, {credentials:'include'});
+    if (res.ok) {
+      const users = await res.json();
+      renderUsers(users);
+    }
+  } catch(e) {}
+}
+
+function renderUsers(users) {
+  const el = document.getElementById('usersList');
+  if (!users || users.length === 0) {
+    el.innerHTML = '<p style="color:var(--muted);">No users found.</p>';
+    return;
+  }
+  el.innerHTML = users.map(u => `
+    <div class="user-item">
+      <div class="user-info">
+        <div class="user-name">${escHtml(u.display_name)} <span style="color:var(--muted);font-weight:400;">(${escHtml(u.username)})</span></div>
+        <div class="user-role">${escHtml(u.role)}</div>
+      </div>
+      ${u.id !== currentUser?.id ? `<button class="btn-delete-sm" onclick="deleteUser(${u.id})">Delete</button>` : '<span style="font-size:0.75rem;color:var(--muted);">You</span>'}
+    </div>
+  `).join('');
+}
+
+async function submitCreateUser() {
+  const username = document.getElementById('newUsername').value.trim();
+  const display_name = document.getElementById('newDisplayName').value.trim();
+  const password = document.getElementById('newPassword').value;
+  const role = document.getElementById('newRole').value;
+  const errEl = document.getElementById('usersError');
+  errEl.style.display = 'none';
+  if (!username || !display_name || !password) {
+    errEl.textContent = 'Please fill in all fields.';
+    errEl.style.display = 'block';
+    return;
+  }
+  try {
+    const res = await fetch(`${API}/users`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({username, display_name, password, role})
+    });
+    if (res.ok) {
+      document.getElementById('newUsername').value = '';
+      document.getElementById('newDisplayName').value = '';
+      document.getElementById('newPassword').value = '';
+      await loadUsers();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      errEl.textContent = data.detail || 'Failed to create user.';
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = 'Connection error.';
+    errEl.style.display = 'block';
+  }
+}
+
+async function deleteUser(id) {
+  if (!confirm('Delete this user?')) return;
+  try {
+    const res = await fetch(`${API}/users/${id}`, {method:'DELETE', credentials:'include'});
+    if (res.ok) await loadUsers();
+  } catch(e) {}
+}
+
+// ============================================================
+// UPLOAD FORM
+// ============================================================
+function openUploadModal() {
+  if (!currentUser) { openLoginModal(); return; }
+  // Reset form
+  document.getElementById('uploadLevel').value = '';
+  document.getElementById('uploadPdf').value = '';
+  document.getElementById('uploadError').style.display = 'none';
+  document.getElementById('uploadSuccess').style.display = 'none';
+  document.getElementById('uploadBtn').disabled = false;
+  document.getElementById('uploadBtn').textContent = 'Submit for Review';
+  openModal('uploadModal');
+}
+
+async function submitUpload() {
+  const level = document.getElementById('uploadLevel').value;
+  const pdfFile = document.getElementById('uploadPdf').files[0];
+  const errEl = document.getElementById('uploadError');
+  const sucEl = document.getElementById('uploadSuccess');
+  const btn = document.getElementById('uploadBtn');
+
+  errEl.style.display = 'none';
+  if (!level || !pdfFile) {
+    errEl.textContent = 'Please select a level and choose a PDF file.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Analysing PDF…';
+
+  const formData = new FormData();
+  formData.append('level', level);
+  formData.append('pdf', pdfFile);
+
+  try {
+    const res = await fetch(`${API}/upload`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData
+    });
+    if (res.ok) {
+      sucEl.style.display = 'block';
+      btn.textContent = 'Submitted!';
+      setTimeout(() => closeModal('uploadModal'), 2500);
+    } else {
+      const data = await res.json().catch(() => ({}));
+      errEl.textContent = data.detail || 'Upload failed. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit for Review';
+    }
+  } catch(e) {
+    errEl.textContent = 'Connection error. Please try again.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Submit for Review';
+  }
+}
+
+// ============================================================
+// MY SUBMISSIONS
+// ============================================================
+async function openMySubsModal() {
+  openModal('mySubsModal');
+  document.getElementById('mySubsList').innerHTML = '<p style="color:var(--muted);text-align:center;">Loading…</p>';
+  try {
+    const res = await fetch(`${API}/my-submissions`, {credentials:'include'});
+    if (res.ok) {
+      const items = await res.json();
+      renderMySubmissions(items);
+    } else {
+      document.getElementById('mySubsList').innerHTML = '<p style="color:#ef4444;">Failed to load.</p>';
+    }
+  } catch(e) {
+    document.getElementById('mySubsList').innerHTML = '<p style="color:#ef4444;">Connection error.</p>';
+  }
+}
+
+function renderMySubmissions(items) {
+  const el = document.getElementById('mySubsList');
+  if (!items || items.length === 0) {
+    el.innerHTML = '<p style="color:var(--muted);text-align:center;">You have no submissions yet.</p>';
+    return;
+  }
+  el.innerHTML = items.map(item => {
+    const statusClass = `status-${item.status || 'pending'}`;
+    const rejectionHtml = item.status === 'rejected' && item.rejection_comment
+      ? `<div class="rejection-reason">💬 ${escHtml(item.rejection_comment)}</div>`
+      : '';
+    return `
+      <div class="submission-item">
+        <div class="submission-title">${escHtml(item.title)}</div>
+        <div class="submission-meta">
+          <span class="${statusClass}">${(item.status || 'pending').toUpperCase()}</span>
+          · Submitted ${formatDate(item.created_at || item.uploaded_at)}
+        </div>
+        ${rejectionHtml}
+      </div>`;
+  }).join('');
+}
+
+// ============================================================
+// KEYBOARD & MISC
+// ============================================================
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('lightbox');
+  const anyModal = document.querySelector('.modal-overlay.active');
+  if (anyModal && e.key === 'Escape') {
+    anyModal.classList.remove('active');
+    return;
+  }
+  if (!lb.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') lbPrev();
+  if (e.key === 'ArrowRight') lbNext();
+});
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('active');
+  });
+});
+
+// ============================================================
+// INIT
+// ============================================================
+async function init() {
+  await checkAuth();
+  await loadResources();
+  if (isCoord()) {
+    loadPendingCount();
+  }
+}
+
+init();
+</script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/esl/sw.js');</script>
+</body>
+</html>
